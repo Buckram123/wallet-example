@@ -1,5 +1,6 @@
 // @nearfile
-import { context, storage, logging } from "near-sdk-as";
+import { context, storage, logging, u128 } from "near-sdk-as";
+const ONE_NEAR: u128 = u128.from("1000000000000000000000000")
 
 // --- contract code goes below
 
@@ -9,6 +10,9 @@ import { LAST_SENDER_KEY } from "./model"
 // This is our change method. It modifies the state of the contract by
 // storing the account_id of the sender under the key "last_sender" on the blockchain
 export function sayHi(): void {
+  // context.attachedDeposit is the amount of NEAR sent to the contract
+  // It's provided by the Blockchain runtime. We just check that it's exactly 1 NEAR.
+  assert(context.attachedDeposit == ONE_NEAR, "Deposit must be 1 NEAR");
   // context.sender is the account_id of the user who sent this call to the contract
   // It's provided by the Blockchain runtime. For now we just store it in a local variable.
   const sender = context.sender;

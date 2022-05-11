@@ -29,7 +29,7 @@ describe('Authorizer', function () {
       const nobody = await contract.whoSaidHi();
       expect(nobody).toBeFalsy();
       // Saying Hi!
-      await contract.sayHi();
+      await contract.sayHi({}, "300000000000000", "1000000000000000000000000");
       // Checking again
       const shouldBeMe = await contract.whoSaidHi();
       expect(shouldBeMe).toBe(accountId);
