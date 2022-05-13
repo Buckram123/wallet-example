@@ -1,6 +1,6 @@
 // @nearfile
 import { context, storage, logging, u128 } from "near-sdk-as";
-const ONE_NEAR: u128 = u128.from("1000000000000000000000000")
+export const ONE_NEAR: u128 = u128.from("1000000000000000000000000")
 
 // --- contract code goes below
 
