@@ -2,6 +2,8 @@ import "regenerator-runtime/runtime";
 
 import * as nearAPI from "near-api-js"
 import getConfig from "./config"
+import { parseNearAmount } from 'near-api-js/lib/utils/format';
+import { DEFAULT_FUNCTION_CALL_GAS} from 'near-api-js'
 
 window.nearConfig = getConfig(process.env.NODE_ENV || "development");
 
@@ -13,12 +15,14 @@ async function initContract() {
   // Initializing Wallet based Account. It can work with NEAR TestNet wallet that
   // is hosted at https://wallet.testnet.near.org
   window.walletAccount = new nearAPI.WalletAccount(window.near);
-
+  window.walletConnection = new nearAPI.WalletConnection(
+    window.near,
+    nearConfig.contractName
+  );
   // Getting the Account ID. If unauthorized yet, it's just empty string.
   window.accountId = window.walletAccount.getAccountId();
-
   // Initializing our contract APIs by contract name and configuration.
-  window.contract = await window.near.loadContract(nearConfig.contractName, {
+  window.contract = new nearAPI.Contract(window.walletConnection.account(), nearConfig.contractName, {
     // NOTE: This configuration only needed while NEAR is still in development
     // View methods are read only. They don't modify the state, but usually return some value.
     viewMethods: ['whoSaidHi'],
@@ -67,7 +71,7 @@ function signedInFlow() {
   // Adding an event to a say-hi button.
   document.getElementById('say-hi').addEventListener('click', () => {
     // We call say Hi and then update who said Hi last.
-    window.contract.sayHi().then(updateWhoSaidHi);
+    window.contract.sayHi({}, DEFAULT_FUNCTION_CALL_GAS, parseNearAmount('1')).then(updateWhoSaidHi);
   });
 
   // Adding an event to a sing-out button.
